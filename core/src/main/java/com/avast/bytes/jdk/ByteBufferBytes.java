@@ -2,6 +2,7 @@ package com.avast.bytes.jdk;
 
 import com.avast.bytes.AbstractBytes;
 import com.avast.bytes.Bytes;
+import com.avast.bytes.internal.ByteBufferInputStream;
 import com.avast.bytes.internal.StreamReader;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public final class ByteBufferBytes extends AbstractBytes {
 
     private final ByteBuffer buffer;
 
-    private ByteBufferBytes(ByteBuffer buffer) {
+    ByteBufferBytes(ByteBuffer buffer) {
         this.buffer = buffer;
     }
 
@@ -128,35 +129,6 @@ public final class ByteBufferBytes extends AbstractBytes {
      */
     public static Bytes readFrom(InputStream stream, int offset, int len) throws IOException {
         return StreamReader.readSliceFrom(stream, offset, len, ByteBufferBytes::newBuilder);
-    }
-
-    private static class ByteBufferInputStream extends InputStream {
-        private final ByteBuffer bb;
-
-        private ByteBufferInputStream(ByteBuffer bb) {
-            this.bb = bb;
-        }
-
-        @Override
-        public int available() {
-            return bb.remaining();
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (!bb.hasRemaining())
-                return -1;
-            return bb.get() & 0xFF; // Make sure the value is in [0..255]
-        }
-
-        @Override
-        public int read(byte[] bytes, int off, int len) throws IOException {
-            if (!bb.hasRemaining())
-                return -1;
-            len = Math.min(len, bb.remaining());
-            bb.get(bytes, off, len);
-            return len;
-        }
     }
 
     private static final class ByteBufferBuilder extends BuilderStream {

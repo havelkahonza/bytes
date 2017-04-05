@@ -14,6 +14,7 @@ based on Java standard library.
 
 Features of Bytes include:
  - reading encapsulated data using random (`Bytes.byteAt(int)`) and linear (`Bytes.newInputStream()`) access
+ - zero copy immutable access to file via `FileBackedBytes`
  - zero copy *substring* views (`Bytes.view(int, int)`)
  - zero copy concat (`Bytes.concat(otherBytes)`)
  - utility methods for reading & writing hex strings (`Bytes.copyFromHex(someBytes.toHexString)`)
@@ -39,14 +40,17 @@ Bytes bytes = builder.toBytes();
 
 JDK-based implementations
 -------------------------
-The `core` module contains two implementations:
+The `core` module contains following implementations:
   * `ByteArrayBytes` - backed by `byte[]`
   * `ByteBufferBytes` - backed by `java.nio.ByteBuffer`
+  * `FileBackedBytes` - backed by `java.nio.MappedByteBuffer`
 
 ```
 ByteArrayBytes bab = ByteArrayBytes.copyFrom(new byte[]{0, 0, 7});
 
 ByteBufferBytes bbb = ByteBufferBytes.copyFrom(ByteBuffer.allocate(1024)); // the most useless buffer ever
+
+FileBackedBytes fbb = FileBackedBytes.from(Paths.get("the/path/to/file.ext"));
 ```
 
 com.google.protobuf.ByteString wrapper
