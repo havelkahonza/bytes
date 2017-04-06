@@ -23,7 +23,7 @@ public final class ByteBufferBytes extends AbstractBytes {
 
     private final ByteBuffer buffer;
 
-    ByteBufferBytes(ByteBuffer buffer) {
+    private ByteBufferBytes(ByteBuffer buffer) {
         this.buffer = buffer;
     }
 

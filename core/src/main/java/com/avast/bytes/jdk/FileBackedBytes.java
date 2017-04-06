@@ -15,9 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 /**
- * Implementation of {@link Bytes} backed by memory mapped file  in format of {@link ByteBuffer}.
+ * Implementation of {@link Bytes} backed by memory mapped file.
  * <p>
- * You create a new instance either calling {@link #from(Path)}.
+ * You create a new instance either by {@link #wrap(Path)}.
  * <p>
  * The implementation uses {@link MappedByteBuffer} for accessing the data.
  */
@@ -52,9 +52,20 @@ public final class FileBackedBytes extends AbstractBytes {
         return buffer.asReadOnlyBuffer();
     }
 
+    /**
+     * Converts this {@link Bytes} to {@link String} in the specified charset.
+     * This operation has the same characteristics in terms of allocation and copying
+     * as {@link #toByteArray()}.
+     * <br>
+     * Please note that {@link FileBackedBytes} keeps only necessary bytes in memory. By calling this method, you cause reading and processing
+     * the whole file in memory, which can cause problems depending on the size of the file.
+     *
+     * @param charset charset to be used when decoding the bytes
+     * @return {@link String} decoded from the bytes
+     */
     @Override
     public String toString(Charset charset) {
-        return getClass().getName() + "{ size = " + size() + " }";
+        return new String(toByteArray(), charset);
     }
 
     @Override
@@ -83,7 +94,7 @@ public final class FileBackedBytes extends AbstractBytes {
         return new FileBackedBytes(slice);
     }
 
-    public static FileBackedBytes from(Path file) throws IOException {
+    public static FileBackedBytes wrap(Path file) throws IOException {
         final FileChannel fileChannel = FileChannel.open(file, StandardOpenOption.READ);
         final MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, Files.size(file));
         fileChannel.close();

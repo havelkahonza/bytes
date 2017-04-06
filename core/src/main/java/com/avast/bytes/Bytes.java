@@ -73,7 +73,9 @@ public interface Bytes {
     /**
      * Converts this {@link Bytes} to {@link String} in the specified charset.
      * This operation has the same characteristics in terms of allocation and copying
-     * as {@link #toByteArray()}
+     * as {@link #toByteArray()}.
+     * <br>
+     * Please note this method can cause memory allocation problems based on the {@link #size()} and current implementation.
      *
      * @param charset charset to be used when decoding the bytes
      * @return {@link String} decoded from the bytes
